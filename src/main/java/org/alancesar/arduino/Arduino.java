@@ -10,68 +10,68 @@ import com.fazecast.jSerialComm.SerialPortEvent;
 
 public class Arduino {
 
-	private final SerialPort serialPort;
-	private final String serialPortName;
+    private final SerialPort serialPort;
+    private final String serialPortName;
 
-	public Arduino(String portDescription) {
-		this.serialPortName = portDescription;
-		serialPort = SerialPort.getCommPort(this.serialPortName);
-		
-		if (!serialPort.openPort()) {
-			System.err.println(String.format("Error on connect %s port", this.serialPortName));
-			return;
-		}
-		
-		System.out.println(String.format("Connected on %s port", serialPortName));
-	}
+    public Arduino(String portDescription) {
+        this.serialPortName = portDescription;
+        serialPort = SerialPort.getCommPort(this.serialPortName);
 
-	public void close() {
-		serialPort.closePort();
-		serialPort.removeDataListener();
-		System.out.println(String.format("Disconnected from %s port", serialPortName));
-	}
+        if (!serialPort.openPort()) {
+            System.err.println(String.format("Error on connect %s port", this.serialPortName));
+            return;
+        }
 
-	public void addDataListener(ArduinoDataListener listener) {
-		serialPort.addDataListener(new SerialPortDataListener() {
-			@Override
-			public int getListeningEvents() {
+        System.out.println(String.format("Connected on %s port", serialPortName));
+    }
 
-				return SerialPort.LISTENING_EVENT_DATA_AVAILABLE;
-			}
+    public void close() {
+        serialPort.closePort();
+        serialPort.removeDataListener();
+        System.out.println(String.format("Disconnected from %s port", serialPortName));
+    }
 
-			@Override
-			public void serialEvent(SerialPortEvent serialPortEvent) {
+    public void addDataListener(ArduinoDataListener listener) {
+        serialPort.addDataListener(new SerialPortDataListener() {
+            @Override
+            public int getListeningEvents() {
 
-				if (serialPortEvent.getEventType() == SerialPort.LISTENING_EVENT_DATA_AVAILABLE) {
-					if (serialPort.bytesAvailable() > 0) {
-						byte[] buffer = new byte[serialPort.bytesAvailable()];
-						serialPort.readBytes(buffer, buffer.length);
-						listener.trigger(new String(buffer));
-					}
-				}
-			}
-		});
-	}
+                return SerialPort.LISTENING_EVENT_DATA_AVAILABLE;
+            }
 
-	public void sendData(String data) {
-		try {
-			serialPort.getOutputStream().write(data.getBytes());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+            @Override
+            public void serialEvent(SerialPortEvent serialPortEvent) {
 
-	public String readData() {
-		if (serialPort.bytesAvailable() > 0) {
-			byte[] buffer = new byte[serialPort.bytesAvailable()];
-			serialPort.readBytes(buffer, buffer.length);
-			return new String(buffer);
-		}
+                if (serialPortEvent.getEventType() == SerialPort.LISTENING_EVENT_DATA_AVAILABLE) {
+                    if (serialPort.bytesAvailable() > 0) {
+                        byte[] buffer = new byte[serialPort.bytesAvailable()];
+                        serialPort.readBytes(buffer, buffer.length);
+                        listener.trigger(new String(buffer));
+                    }
+                }
+            }
+        });
+    }
 
-		return null;
-	}
+    public void sendData(String data) {
+        try {
+            serialPort.getOutputStream().write(data.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-	public String getSerialPortName() {
-		return serialPortName;
-	}
+    public String readData() {
+        if (serialPort.bytesAvailable() > 0) {
+            byte[] buffer = new byte[serialPort.bytesAvailable()];
+            serialPort.readBytes(buffer, buffer.length);
+            return new String(buffer);
+        }
+
+        return null;
+    }
+
+    public String getSerialPortName() {
+        return serialPortName;
+    }
 }

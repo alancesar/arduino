@@ -10,14 +10,14 @@ public class SerialTest {
 	
 	@Before
 	public void init() throws InterruptedException {
-		 arduino = new Arduino("/dev/cu.usbmodem1421");
+		 arduino = new Arduino("COM11");
 		 Thread.sleep(1000);
 	}
 	
 	@After
 	public void finalize() throws InterruptedException {
 		Thread.sleep(1000);
-		arduino.close();
+		arduino.disconnect();
 	}
 	
 	@Test

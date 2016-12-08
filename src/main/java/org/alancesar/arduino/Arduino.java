@@ -1,8 +1,7 @@
 package org.alancesar.arduino;
 
 import java.io.IOException;
-
-import org.alancesar.arduino.async.ArduinoDataListener;
+import java.util.function.Consumer;
 
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
@@ -10,11 +9,24 @@ import com.fazecast.jSerialComm.SerialPortEvent;
 
 public class Arduino {
 
-    private final SerialPort serialPort;
-    private final String serialPortName;
+    private SerialPort serialPort;
+    private String serialPortName;
+    private boolean connected;
 
-    public Arduino(String portDescription) {
-        this.serialPortName = portDescription;
+    public Arduino() {
+    }
+
+    public Arduino(String serialPortName) {
+        connect(serialPortName);
+    }
+
+    public synchronized void connect(String serialPortName) {
+        if (connected) {
+            System.err.println(String.format("Arduino is already connected on serial port %", this.serialPortName));
+            return;
+        }
+
+        this.serialPortName = serialPortName;
         serialPort = SerialPort.getCommPort(this.serialPortName);
 
         if (!serialPort.openPort()) {
@@ -22,16 +34,22 @@ public class Arduino {
             return;
         }
 
+        connected = true;
         System.out.println(String.format("Connected on %s port", serialPortName));
     }
 
-    public void close() {
+    public synchronized void disconnect() {
+        if (!connected) {
+            return;
+        }
+
         serialPort.closePort();
         serialPort.removeDataListener();
+        connected = false;
         System.out.println(String.format("Disconnected from %s port", serialPortName));
     }
 
-    public void addDataListener(ArduinoDataListener listener) {
+    public void addDataListener(Consumer<String> listener) {
         serialPort.addDataListener(new SerialPortDataListener() {
             @Override
             public int getListeningEvents() {
@@ -46,7 +64,7 @@ public class Arduino {
                     if (serialPort.bytesAvailable() > 0) {
                         byte[] buffer = new byte[serialPort.bytesAvailable()];
                         serialPort.readBytes(buffer, buffer.length);
-                        listener.trigger(new String(buffer));
+                        listener.accept(new String(buffer));
                     }
                 }
             }
@@ -73,5 +91,9 @@ public class Arduino {
 
     public String getSerialPortName() {
         return serialPortName;
+    }
+    
+    public boolean isConnected() {
+        return connected;
     }
 }

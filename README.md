@@ -23,7 +23,7 @@ arduino.send("Hello world");
 ```
 
 ##Serial event listener
-Trigger event every time serial send new data
+Trigger an event every time serial send new data
 ```Java
 // Java 8 lambda
 arduino.addDataListener((data) -> System.out.println(data));

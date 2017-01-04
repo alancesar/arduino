@@ -1,5 +1,5 @@
-# arduino
-Arduino Java Serial Communication
+# arduino-api
+Arduino Java Serial Communication API
 
 ##Initializing
 ```Java

@@ -12,19 +12,19 @@ Arduino arduino = new Arduino(serialPortName);
 ```
 
 ##Read serial data
-```Java
+```java
 String data = arduino.readData();
 System.out.println(data);
 ```
 
 ##Send serial data
-```
+```java
 arduino.send("Hello world");
 ```
 
 ##Serial event listener
 Trigger an event every time serial send new data
-```Java
+```java
 // Java 8 lambda
 arduino.addDataListener((data) -> System.out.println(data));
 
@@ -38,6 +38,6 @@ arduino.addDataListener(new ArduinoDataListener() {
 ```
 
 ##Closing serial connection
-```Java
+```java
 arduino.close();
 ```

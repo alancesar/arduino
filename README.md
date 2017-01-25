@@ -25,7 +25,7 @@ arduino.send("Hello world");
 ##Serial event listener
 Trigger an event every time serial send new data
 ```java
-arduino.addDataListener((data) -> System.out.println(data));
+arduino.addDataListener(data -> System.out.println(data));
 ```
 
 ##Closing serial connection

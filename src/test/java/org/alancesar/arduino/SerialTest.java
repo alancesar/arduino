@@ -33,6 +33,6 @@ public class SerialTest {
 	
 	@Test
 	public void listener() {
-		arduino.addDataListener((data) -> System.out.println("Listener: " + data));
+		arduino.addDataListener(data -> System.out.println("Listener: " + data));
 	}
 }

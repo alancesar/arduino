@@ -22,7 +22,7 @@ public class Arduino {
 
     public synchronized void connect(String serialPortName) {
         if (connected) {
-            System.err.println(String.format("Arduino is already connected on serial port %", this.serialPortName));
+            System.err.println(String.format("Arduino is already connected on serial port %s", this.serialPortName));
             return;
         }
 
